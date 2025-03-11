@@ -31,10 +31,13 @@ jobs:
 
       - name: Create Firebase service account file
         run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > "firebaseServiceAccount.json"
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > firebaseServiceAccount.json
 
       - name: List files
         run: ls -la
+
+      - name: Cat file
+        run: cat firebaseServiceAccount.json
 
       - name: Run scraper
         run: npm start
