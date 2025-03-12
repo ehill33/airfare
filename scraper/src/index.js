@@ -59,22 +59,25 @@ if (failedScrapes.length > 0) {
   );
   await new Promise((resolve) => setTimeout(resolve, 60000 * 2));
 
-  for (const failedScrape of failedScrapes) {
-    const airfares = await scrapeAirfares(scrapeConfig);
+  for (let i = 0; i < failedScrapes.length; i++) {
+    const failedScrapeConfig = failedScrapes[i];
+    const airfares = await scrapeAirfares(failedScrapeConfig);
 
-    if (!airfares) {
-      console.error(
-        `Failed to scrape route after 2 tries: ${JSON.stringify(
-          failedScrape,
-          null,
-          2
-        )}`
-      );
-      continue;
+    if (!!airfares) {
+      failedScrapes.splice(i, 1);
+      await saveAirfares(airfares);
     }
-
-    await saveAirfares(airfares);
   }
+}
+
+if (failedScrapes.length > 0) {
+  console.error(
+    `Failed to scrape ${failedScrapes.length} routes after 2 tries`
+  );
+  for (const failedScrapeConfig of failedScrapes) {
+    console.error(JSON.stringify(failedScrapeConfig, null, 2));
+  }
+  process.exit(1);
 }
 
 async function scrapeAirfares(scrapeConfig) {
