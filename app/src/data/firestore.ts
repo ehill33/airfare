@@ -1,11 +1,16 @@
+import {
+  FirestoreDataConverter,
+  QueryDocumentSnapshot,
+  Timestamp,
+} from 'firebase-admin/firestore';
 import { db } from './firebase';
 
-type Trip = {
+export type Trip = {
   id: string;
   name: string;
 };
 
-type Route = {
+export type Route = {
   id: string;
   fromAirport: string;
   toAirport: string;
@@ -21,6 +26,9 @@ export type Fares = {
   best: Fare;
   quickest: Fare;
 };
+
+export type FareClass = 'economy' | 'business';
+export type FareType = keyof Fares;
 
 export type Fare = {
   price: number;
@@ -40,6 +48,11 @@ export async function getTrips(): Promise<Trip[]> {
   }
 }
 
+export async function getTrip(tripId: string): Promise<Trip> {
+  const tripSnapshot = await db.collection('trips').doc(tripId).get();
+  return tripSnapshot.data() as Trip;
+}
+
 export async function getTripRoutes(tripId: string): Promise<Route[]> {
   try {
     const routesSnapshot = await db
@@ -47,11 +60,10 @@ export async function getTripRoutes(tripId: string): Promise<Route[]> {
       .doc(tripId)
       .collection('routes')
       .orderBy('economy.cheapest.price', 'asc')
+      .withConverter(routeConverter)
       .get();
 
-    return routesSnapshot.docs.map(
-      (doc) => ({ id: doc.id, ...doc.data() } as Route)
-    );
+    return routesSnapshot.docs.map((doc) => doc.data());
   } catch (error) {
     console.error(error);
     return [];
@@ -75,3 +87,19 @@ export async function getRouteHistory(
     console.error(error);
   }
 }
+
+const routeConverter: FirestoreDataConverter<Route> = {
+  fromFirestore: (snapshot: QueryDocumentSnapshot) => {
+    const data = snapshot.data();
+    data.id = snapshot.id;
+
+    if (data.updatedAt instanceof Timestamp) {
+      data.updatedAt = data.updatedAt.toDate().toISOString();
+    }
+
+    return data as Route;
+  },
+  toFirestore: (route: Route) => {
+    return route;
+  },
+};
