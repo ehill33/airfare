@@ -22,9 +22,11 @@ export type Route = {
 };
 
 export type Fares = {
+  id: string;
   cheapest: Fare;
   best: Fare;
   quickest: Fare;
+  createdAt: string;
 };
 
 export type FareClass = 'economy' | 'business';
@@ -70,21 +72,39 @@ export async function getTripRoutes(tripId: string): Promise<Route[]> {
   }
 }
 
+export async function getRoute(
+  tripId: string,
+  routeId: string
+): Promise<Route> {
+  const routeSnapshot = await db
+    .collection('trips')
+    .doc(tripId)
+    .collection('routes')
+    .doc(routeId)
+    .get();
+
+  return routeSnapshot.data() as Route;
+}
+
 export async function getRouteHistory(
   tripId: string,
   routeId: string,
   cabinClass: string
-) {
+): Promise<Fares[]> {
   try {
-    return await db
+    const routeHistorySnapshot = await db
       .collection('trips')
       .doc(tripId)
       .collection('routes')
       .doc(routeId)
       .collection(cabinClass)
+      .withConverter(fareConverter)
       .get();
+
+    return routeHistorySnapshot.docs.map((doc) => doc.data());
   } catch (error) {
     console.error(error);
+    return [];
   }
 }
 
@@ -101,5 +121,21 @@ const routeConverter: FirestoreDataConverter<Route> = {
   },
   toFirestore: (route: Route) => {
     return route;
+  },
+};
+
+const fareConverter: FirestoreDataConverter<Fares> = {
+  fromFirestore: (snapshot: QueryDocumentSnapshot) => {
+    const data = snapshot.data();
+    data.id = snapshot.id;
+
+    if (data.createdAt instanceof Timestamp) {
+      data.createdAt = data.createdAt.toDate().toISOString();
+    }
+
+    return data as Fares;
+  },
+  toFirestore: (fare: Fares) => {
+    return fare;
   },
 };

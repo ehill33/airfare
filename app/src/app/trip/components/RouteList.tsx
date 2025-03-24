@@ -20,7 +20,7 @@ function RouteList({ routes }: RouteListProps) {
 
   return (
     <div>
-      <div className='flex justify-start space-x-2 bg-gray-700 '>
+      <div className='flex justify-start space-x-2 bg-gray-700 mt-4 mb-2'>
         <Button
           variant={fareClass === 'economy' ? 'default' : 'outline'}
           onClick={() => setFareClass('economy')}
