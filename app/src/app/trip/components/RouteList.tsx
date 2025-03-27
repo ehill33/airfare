@@ -43,10 +43,7 @@ function RouteList({
         setFilterState={setFilterState}
         applyFilters={applyFilters}
       />
-      <ul
-        className='grid gap-4'
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(375px, 1fr))' }}
-      >
+      <ul className='grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]'>
         {sortedRoutes.map((route: Route) => (
           <li key={route.id} className='bg-gray-700 my-1'>
             <RouteCard fareClass={fareClass} route={route} />

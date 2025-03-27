@@ -1,26 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { ListFilterPlus } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
-import useMediaQuery from '@/hooks/useMediaQuery';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { FareClass } from '@/data/firestore';
 import { Checkbox } from '@/components/ui/checkbox';
+import ResponsiveDialog from '@/components/ResponsiveDialog';
 
 type FilterState = {
   fareClass: FareClass;
@@ -43,7 +28,6 @@ export default function RouteFilters({
   setFilterState,
   applyFilters,
 }: RouteFiltersProps) {
-  const isMobile = useMediaQuery('(max-width: 768px)');
   const [isOpen, setIsOpen] = useState(false);
 
   const handleApplyFilters = () => {
@@ -51,50 +35,26 @@ export default function RouteFilters({
     setIsOpen(false);
   };
 
-  if (isMobile) {
-    return (
-      <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerTrigger asChild>
-          <FilterButton isOpen={isOpen} setIsOpen={setIsOpen} />
-        </DrawerTrigger>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Filters</DrawerTitle>
-          </DrawerHeader>
-          <RouteFiltersContent
-            departingCities={departingCities}
-            arrivingCities={arrivingCities}
-            filterState={filterState}
-            setFilterState={setFilterState}
-          />
-          <div className='p-4'>
-            <Button onClick={handleApplyFilters}>Apply</Button>
-          </div>
-        </DrawerContent>
-      </Drawer>
-    );
-  }
-
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <FilterButton isOpen={isOpen} setIsOpen={setIsOpen} />
-      </DialogTrigger>
-      <DialogContent className='container mx-auto'>
-        <DialogHeader>
-          <DialogTitle>Filters</DialogTitle>
-        </DialogHeader>
+    <ResponsiveDialog
+      title='Filters'
+      Trigger={<FilterButton isOpen={isOpen} setIsOpen={setIsOpen} />}
+      Content={
         <RouteFiltersContent
           departingCities={departingCities}
           arrivingCities={arrivingCities}
           filterState={filterState}
           setFilterState={setFilterState}
         />
-        <DialogFooter>
+      }
+      Footer={
+        <div className='flex justify-end'>
           <Button onClick={handleApplyFilters}>Apply</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      }
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+    />
   );
 }
 
@@ -107,7 +67,7 @@ function FilterButton({
 }) {
   return (
     <Button size='lg' className='my-4' onClick={() => setIsOpen(!isOpen)}>
-      <ListFilterPlus />
+      <ListFilter />
     </Button>
   );
 }
