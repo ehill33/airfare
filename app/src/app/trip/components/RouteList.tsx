@@ -1,18 +1,34 @@
 'use client';
 
-import { FareClass, Route } from '@/data/firestore';
+import { Route } from '@/data/firestore';
 import RouteCard from './RouteCard';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import RouteFilters from './RouteFilters';
+import useFilterRoutes from '@/hooks/useFilterRoutes';
 
 type RouteListProps = {
   routes: Route[];
+  departingCities: string[];
+  arrivingCities: string[];
 };
 
-function RouteList({ routes }: RouteListProps) {
-  const [fareClass, setFareClass] = useState<FareClass>('economy');
+function RouteList({
+  routes,
+  departingCities,
+  arrivingCities,
+}: RouteListProps) {
+  const {
+    fareClass,
+    filteredRoutes,
+    filterState,
+    setFilterState,
+    applyFilters,
+  } = useFilterRoutes({
+    routes,
+    departingCities,
+    arrivingCities,
+  });
 
-  const sortedRoutes = routes.toSorted((a, b) => {
+  const sortedRoutes = filteredRoutes.toSorted((a, b) => {
     const fareA = a[fareClass].cheapest.price;
     const fareB = b[fareClass].cheapest.price;
     return fareA - fareB;
@@ -20,20 +36,13 @@ function RouteList({ routes }: RouteListProps) {
 
   return (
     <div>
-      <div className='flex justify-start space-x-2 bg-gray-700 mt-4 mb-2'>
-        <Button
-          variant={fareClass === 'economy' ? 'default' : 'outline'}
-          onClick={() => setFareClass('economy')}
-        >
-          Economy
-        </Button>
-        <Button
-          variant={fareClass === 'business' ? 'default' : 'outline'}
-          onClick={() => setFareClass('business')}
-        >
-          Business
-        </Button>
-      </div>
+      <RouteFilters
+        departingCities={departingCities}
+        arrivingCities={arrivingCities}
+        filterState={filterState}
+        setFilterState={setFilterState}
+        applyFilters={applyFilters}
+      />
       <ul
         className='grid gap-4'
         style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(375px, 1fr))' }}
