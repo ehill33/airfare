@@ -37,7 +37,7 @@ function ResponsiveDialog({
     return (
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>{Trigger}</DrawerTrigger>
-        <DrawerContent className='p-4'>
+        <DrawerContent className='p-4 flex flex-col gap-4'>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
           </DrawerHeader>
@@ -51,7 +51,7 @@ function ResponsiveDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{Trigger}</DialogTrigger>
-      <DialogContent className=''>
+      <DialogContent className='flex flex-col gap-10'>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

@@ -4,18 +4,15 @@ import { Route } from '@/data/firestore';
 import RouteCard from './RouteCard';
 import RouteFilters from './RouteFilters';
 import useFilterRoutes from '@/hooks/useFilterRoutes';
+import AirportManagement from './AirportManagement';
+import { Trip } from '@/data/firestore';
 
 type RouteListProps = {
   routes: Route[];
-  departingCities: string[];
-  arrivingCities: string[];
+  trip: Trip;
 };
 
-function RouteList({
-  routes,
-  departingCities,
-  arrivingCities,
-}: RouteListProps) {
+function RouteList({ routes, trip }: RouteListProps) {
   const {
     fareClass,
     filteredRoutes,
@@ -24,8 +21,7 @@ function RouteList({
     applyFilters,
   } = useFilterRoutes({
     routes,
-    departingCities,
-    arrivingCities,
+    trip,
   });
 
   const sortedRoutes = filteredRoutes.toSorted((a, b) => {
@@ -36,13 +32,15 @@ function RouteList({
 
   return (
     <div>
-      <RouteFilters
-        departingCities={departingCities}
-        arrivingCities={arrivingCities}
-        filterState={filterState}
-        setFilterState={setFilterState}
-        applyFilters={applyFilters}
-      />
+      <div className='flex justify-between sm:justify-start sm:gap-4 my-4'>
+        <AirportManagement trip={trip} />
+        <RouteFilters
+          trip={trip}
+          filterState={filterState}
+          setFilterState={setFilterState}
+          applyFilters={applyFilters}
+        />
+      </div>
       <ul className='grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]'>
         {sortedRoutes.map((route: Route) => (
           <li key={route.id} className='bg-gray-700 my-1'>

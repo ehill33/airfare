@@ -6,33 +6,11 @@ export default async function Trip({ params }: { params: { tripId: string } }) {
   const trip = await getTrip(tripId);
   const routes: Route[] = await getTripRoutes(tripId);
 
-  const departingCities = [
-    // Drivable
-    'CVG',
-    'CMH',
-    'IND',
-    'SDF',
-    'ORD',
-    'CLE',
-    'DTW',
-    // Direct flights
-    'LAX',
-    'SFO',
-    'DFW',
-    'IAH',
-  ];
-
-  const arrivingCities = ['SYD', 'MEL'];
-
   return (
     <div className='container mx-auto mt-4 '>
       <h1 className='text-3xl text-secondary mb-4'>{trip.name}</h1>
 
-      <RouteList
-        routes={routes}
-        departingCities={departingCities}
-        arrivingCities={arrivingCities}
-      />
+      <RouteList routes={routes} trip={trip} />
     </div>
   );
 }

@@ -1,9 +1,8 @@
-import { getTripRoutes, getTrips } from '@/data/firestore';
+import { getTrips } from '@/data/firestore';
 import Link from 'next/link';
 
 export default async function Home() {
   const trips = await getTrips();
-  // const routes = await getTripRoutes('RGh7kNPGhm7XHeZbJGuD');
 
   return (
     <div className='container mx-auto mt-4'>

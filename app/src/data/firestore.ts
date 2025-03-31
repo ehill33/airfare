@@ -4,10 +4,12 @@ import {
   Timestamp,
 } from 'firebase-admin/firestore';
 import { db } from './firebase';
-
+import { Airport } from '@/lib/airport-util';
 export type Trip = {
   id: string;
   name: string;
+  departureAirports: Airport[];
+  arrivalAirports: Airport[];
 };
 
 export type Route = {
@@ -70,6 +72,16 @@ export async function getTripRoutes(tripId: string): Promise<Route[]> {
     console.error(error);
     return [];
   }
+}
+
+export async function updateTrip(trip: Trip) {
+  const tripSnapshot = await db.collection('trips').doc(trip.id).get();
+
+  if (!tripSnapshot.exists) {
+    throw new Error('Trip not found');
+  }
+
+  await db.collection('trips').doc(trip.id).set(trip, { merge: true });
 }
 
 export async function getRoute(

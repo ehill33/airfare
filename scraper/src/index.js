@@ -1,41 +1,26 @@
 // import { scrapeFlights } from './google-flights/scraper.js';
-import {
-  getAirfares,
-  getLatestTripInfoForCabinClass,
-  getTripRoutes,
-} from './lib/firestore.js';
+
 import { scrapeFlights } from './momondo/scraper.js';
-import { addAirfares, getRouteHistory } from './lib/firestore.js';
+import { addAirfares, getTrip } from './lib/firestore.js';
 
 console.time('main');
 
-const departingCities = [
-  // Drivable
-  'CVG',
-  'CMH',
-  'IND',
-  'SDF',
-  'ORD',
-  'CLE',
-  'DTW',
-  // Direct flights
-  'LAX',
-  'SFO',
-  'DFW',
-  'IAH',
-];
+const TRIP_ID = 'RGh7kNPGhm7XHeZbJGuD';
 
-const arrivingCities = ['SYD', 'MEL'];
+const trip = await getTrip(TRIP_ID);
+
+const departureAirports = trip.departureAirports.map((airport) => airport.iata);
+const arrivalAirports = trip.arrivalAirports.map((airport) => airport.iata);
 
 const failedScrapes = [];
 
-for (const departingCity of departingCities) {
-  for (const arrivingCity of arrivingCities) {
+for (const departureAirport of departureAirports) {
+  for (const arrivalAirport of arrivalAirports) {
     for (const cabinClass of ['business', 'economy']) {
       const scrapeConfig = {
         cabinClass,
-        fromAirport: departingCity,
-        toAirport: arrivingCity,
+        fromAirport: departureAirport,
+        toAirport: arrivalAirport,
         startDate: '2025-12-27',
         endDate: '2026-01-11',
       };
@@ -99,7 +84,7 @@ async function scrapeAirfares(scrapeConfig) {
 
 async function saveAirfares(airfares) {
   try {
-    await addAirfares('RGh7kNPGhm7XHeZbJGuD', airfares);
+    await addAirfares(TRIP_ID, airfares);
     console.log(
       `Saved ${airfares.fromAirport}-${airfares.toAirport} in ${airfares.cabinClass}`
     );

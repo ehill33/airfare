@@ -3,27 +3,21 @@
 import { useState } from 'react';
 import { ListFilter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { FareClass } from '@/data/firestore';
+import { FareClass, Trip } from '@/data/firestore';
 import { Checkbox } from '@/components/ui/checkbox';
 import ResponsiveDialog from '@/components/ResponsiveDialog';
-
-type FilterState = {
-  fareClass: FareClass;
-  filteredDepartingCities: { city: string; isSelected: boolean }[];
-  filteredArrivingCities: { city: string; isSelected: boolean }[];
-};
+import { FilterState } from '@/hooks/useFilterRoutes';
+import { Airport } from '@/lib/airport-util';
 
 type RouteFiltersProps = {
-  departingCities: string[];
-  arrivingCities: string[];
+  trip: Trip;
   filterState: FilterState;
   setFilterState: (filterState: FilterState) => void;
   applyFilters: () => void;
 };
 
 export default function RouteFilters({
-  departingCities,
-  arrivingCities,
+  trip,
   filterState,
   setFilterState,
   applyFilters,
@@ -41,8 +35,7 @@ export default function RouteFilters({
       Trigger={<FilterButton isOpen={isOpen} setIsOpen={setIsOpen} />}
       Content={
         <RouteFiltersContent
-          departingCities={departingCities}
-          arrivingCities={arrivingCities}
+          trip={trip}
           filterState={filterState}
           setFilterState={setFilterState}
         />
@@ -66,20 +59,18 @@ function FilterButton({
   setIsOpen: (isOpen: boolean) => void;
 }) {
   return (
-    <Button size='lg' className='my-4' onClick={() => setIsOpen(!isOpen)}>
+    <Button size='lg' onClick={() => setIsOpen(!isOpen)}>
       <ListFilter />
     </Button>
   );
 }
 
 function RouteFiltersContent({
-  departingCities,
-  arrivingCities,
+  trip,
   filterState,
   setFilterState,
 }: {
-  departingCities: string[];
-  arrivingCities: string[];
+  trip: Trip;
   filterState: FilterState;
   setFilterState: (filterState: FilterState) => void;
 }) {
@@ -98,15 +89,15 @@ function RouteFiltersContent({
         />
       </div>
       <div className='grid grid-cols-2 gap-2'>
-        <CitiesList
-          title='Departing Cities'
-          cities={departingCities}
+        <AirportList
+          title='Departure Airports'
+          airports={trip.departureAirports}
           filterState={filterState}
           setFilterState={setFilterState}
         />
-        <CitiesList
-          title='Arriving Cities'
-          cities={arrivingCities}
+        <AirportList
+          title='Arrival Airports'
+          airports={trip.arrivalAirports}
           filterState={filterState}
           setFilterState={setFilterState}
         />
@@ -137,27 +128,27 @@ function FareClassButton({
   );
 }
 
-function CitiesList({
+function AirportList({
   title,
-  cities,
+  airports,
   filterState,
   setFilterState,
 }: {
-  title: string;
-  cities: string[];
+  title: 'Departure Airports' | 'Arrival Airports';
+  airports: Airport[];
   filterState: FilterState;
   setFilterState: (filterState: FilterState) => void;
 }) {
   const filterStateKey =
-    title === 'Departing Cities'
-      ? 'filteredDepartingCities'
-      : 'filteredArrivingCities';
+    title === 'Departure Airports'
+      ? 'filteredDepartureAirports'
+      : 'filteredArrivalAirports';
 
-  const handleCitiesCheckBoxChange = (city: string) => {
+  const handleAirportsCheckBoxChange = (airport: Airport) => {
     setFilterState({
       ...filterState,
       [filterStateKey]: filterState[filterStateKey].map((c) =>
-        c.city === city ? { ...c, isSelected: !c.isSelected } : c
+        c.airportIata === airport.iata ? { ...c, isSelected: !c.isSelected } : c
       ),
     });
   };
@@ -166,17 +157,18 @@ function CitiesList({
     <div className=' p-2'>
       <h3 className='text-lg font-bold'>{title}</h3>
       <ul>
-        {cities.map((city) => (
-          <li key={city} className='flex items-center gap-2'>
+        {airports.map((airport) => (
+          <li key={airport.id} className='flex items-center gap-2'>
             <Checkbox
-              id={city}
+              id={airport.id.toString()}
               checked={
-                filterState[filterStateKey].find((c) => c.city === city)
-                  ?.isSelected
+                filterState[filterStateKey].find(
+                  (c) => c.airportIata === airport.iata
+                )?.isSelected
               }
-              onCheckedChange={() => handleCitiesCheckBoxChange(city)}
+              onCheckedChange={() => handleAirportsCheckBoxChange(airport)}
             />
-            <label htmlFor={city}>{city}</label>
+            <label htmlFor={airport.id.toString()}>{airport.iata}</label>
           </li>
         ))}
       </ul>

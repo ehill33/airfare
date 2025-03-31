@@ -1,6 +1,11 @@
 import { FieldValue } from 'firebase-admin/firestore';
 import { db } from './firebase.js';
 
+export async function getTrip(tripId) {
+  const tripSnapshot = await db.collection('trips').doc(tripId).get();
+  return tripSnapshot.data();
+}
+
 export async function getAirfares(tripId, routeId, cabinClass) {
   try {
     return await db

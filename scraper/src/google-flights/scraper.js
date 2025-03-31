@@ -49,15 +49,15 @@ export async function scrapeFlights({
     await wait(500);
     await page.getByRole('button', { name: 'Search' }).click();
 
-    // const departingFlightsHeader = page
+    // const departureFlightsHeader = page
     //   .getByRole('heading', {
-    //     name: 'Top departing flights',
+    //     name: 'Top departure flights',
     //   })
-    //   .or(page.getByRole('heading', { name: 'Departing flights' }));
-    // await expect(departingFlightsHeader).toBeVisible({ timeout: 15000 });
+    //   .or(page.getByRole('heading', { name: 'Departure flights' }));
+    // await expect(departureFlightsHeader).toBeVisible({ timeout: 15000 });
     // await expect(
     //   page.getByRole('heading', {
-    //     name: /departing flights/i,
+    //     name: /departure flights/i,
     //   })
     // ).toBeVisible({ timeout: 15000 });
 
