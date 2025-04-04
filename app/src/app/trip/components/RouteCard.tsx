@@ -32,7 +32,6 @@ export default function RouteCard({ fareClass, route }: RouteCardProps) {
     endDate,
     business,
     economy,
-    id,
     updatedAt,
   } = route;
 

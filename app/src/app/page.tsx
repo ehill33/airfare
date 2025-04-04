@@ -7,7 +7,7 @@ export default async function Home() {
   const trips = await getTrips();
 
   return (
-    <div className='container mx-auto'>
+    <div>
       <Header title='Trips' />
       <ul className='max-w-xl'>
         {trips &&

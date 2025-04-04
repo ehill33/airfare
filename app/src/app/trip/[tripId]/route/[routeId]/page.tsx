@@ -13,7 +13,7 @@ import Header from '@/components/Header';
 export default async function RoutePage({
   params,
 }: {
-  params: { tripId: string; routeId: string };
+  params: Promise<{ tripId: string; routeId: string }>;
 }) {
   const { tripId, routeId } = await params;
   const route = await getRoute(tripId, routeId);
@@ -34,7 +34,7 @@ export default async function RoutePage({
   const highestBusinessFare = getHighestFare(businessRouteHistory);
 
   return (
-    <div className='container mx-auto mt-4 '>
+    <div>
       <Header title={routeTitle} showBackButton />
       <div className='flex flex-col gap-10'>
         <div>

@@ -131,7 +131,11 @@ function AirportList({
     });
   };
 
-  const handleAllAirportsCheckBoxChange = (checked: boolean) => {
+  const handleAllAirportsCheckBoxChange = (
+    checked: boolean | 'indeterminate'
+  ) => {
+    if (checked === 'indeterminate') return;
+
     setFilterState({
       ...filterState,
       [filterStateKey]: filterState[filterStateKey].map((c) => ({

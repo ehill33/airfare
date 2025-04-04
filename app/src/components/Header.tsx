@@ -2,9 +2,9 @@
 
 import { ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useRouter } from 'next/navigation';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import { UserButton } from '@clerk/nextjs';
 
 type HeaderProps = {
   title: string;
@@ -16,7 +16,7 @@ export default function Header({ title, showBackButton }: HeaderProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
-    <div>
+    <header>
       <div className='flex items-center justify-between'>
         {showBackButton && (
           <Button
@@ -28,14 +28,29 @@ export default function Header({ title, showBackButton }: HeaderProps) {
             <ArrowLeft />
           </Button>
         )}
-        <Avatar className='md:w-12 md:h-12 w-10 h-10 ml-auto'>
-          <AvatarImage src='https://github.com/shadcn.png' />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <div className='flex items-center ml-auto gap-4'>
+          <UserButton
+            appearance={{
+              elements: {
+                rootBox: {
+                  color: 'white',
+                },
+                avatarBox: {
+                  width: '48px',
+                  height: '48px',
+                  '@media (max-width: 768px)': {
+                    width: '40px',
+                    height: '40px',
+                  },
+                },
+              },
+            }}
+          />
+        </div>
       </div>
       <h1 className='text-3xl md:text-6xl font-bold text-foreground my-10'>
         {title}
       </h1>
-    </div>
+    </header>
   );
 }
