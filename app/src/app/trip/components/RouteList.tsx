@@ -32,7 +32,7 @@ function RouteList({ routes, trip }: RouteListProps) {
 
   return (
     <div>
-      <div className='flex justify-between sm:justify-start sm:gap-4 my-4'>
+      <div className='flex justify-between sm:justify-start gap-4 my-4'>
         <AirportManagement trip={trip} />
         <RouteFilters
           trip={trip}
@@ -41,7 +41,7 @@ function RouteList({ routes, trip }: RouteListProps) {
           applyFilters={applyFilters}
         />
       </div>
-      <ul className='grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]'>
+      <ul className='grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))] overflow-x-scroll'>
         {sortedRoutes.map((route: Route) => (
           <li key={route.id}>
             <RouteCard fareClass={fareClass} route={route} />

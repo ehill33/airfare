@@ -46,7 +46,7 @@ export default function RouteCard({ fareClass, route }: RouteCardProps) {
 
   return (
     <Link href={`/trip/${tripId}/route/${route.id}`}>
-      <Card>
+      <Card className='@container'>
         <CardHeader>
           <div className='flex justify-between'>
             <CardTitle>{routeTitle}</CardTitle>
@@ -59,7 +59,7 @@ export default function RouteCard({ fareClass, route }: RouteCardProps) {
         <CardContent>
           <div className='space-y-4'>
             {fares && (
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
+              <div className='grid grid-cols-1 gap-3 @xs:grid-cols-3'>
                 <FarePrice fareType='cheapest' fare={fares.cheapest} />
                 <FarePrice fareType='best' fare={fares.best} />
                 <FarePrice fareType='quickest' fare={fares.quickest} />

@@ -25,11 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang='en'>
-        <body>
-          <div
-            className={`${geistSans.variable} ${geistMono.variable} antialiased p-4 min-h-dvh dark bg-background`}
-          >
+      <html lang='en' className='dark'>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh bg-background`}
+        >
+          <div className='min-w-full p-4 overflow-x-scroll'>
             <main className='container mx-auto'>
               <SignedOut>
                 <div className='grid place-items-center min-h-dvh w-full'>
