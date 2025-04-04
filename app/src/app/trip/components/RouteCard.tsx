@@ -87,11 +87,13 @@ export function FarePrice({
   const fareDuration = typeof fare === 'number' ? undefined : fare.duration;
 
   return (
-    <div className='p-3 border rounded-lg bg-white'>
+    <div className='p-4 border rounded-lg'>
       <div className='font-medium text-sm text-muted-foreground mb-1 capitalize'>
         {fareType}
       </div>
-      <div className='font-bold text-lg'>{formatPrice(farePrice)}</div>
+      <div className='font-bold text-lg text-foreground'>
+        {formatPrice(farePrice)}
+      </div>
       {fareDuration && (
         <div className='text-sm text-muted-foreground'>
           {formatDuration(fareDuration)}

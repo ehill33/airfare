@@ -101,7 +101,7 @@ export async function getRoute(
 export async function getRouteHistory(
   tripId: string,
   routeId: string,
-  cabinClass: string
+  cabinClass: FareClass
 ): Promise<Fares[]> {
   try {
     const routeHistorySnapshot = await db

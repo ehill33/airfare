@@ -1,7 +1,14 @@
 import { FarePrice } from '@/app/trip/components/RouteCard';
-import { getRouteHistory, getRoute, Fares } from '@/data/firestore';
+import {
+  getRouteHistory,
+  getRoute,
+  Fares,
+  Route,
+  FareClass,
+} from '@/data/firestore';
 import PriceChart from './components/PriceChart';
 import { Button } from '@/components/ui/button';
+import Header from '@/components/Header';
 
 export default async function RoutePage({
   params,
@@ -28,50 +35,67 @@ export default async function RoutePage({
 
   return (
     <div className='container mx-auto mt-4 '>
-      <div className='flex flex-row justify-between mb-4'>
-        <h1 className='text-3xl text-secondary mb-4'>{routeTitle}</h1>
-        <a
-          href={`https://www.momondo.com/flight-search/${route.fromAirport}-${route.toAirport}/${route.startDate}/${route.endDate}`}
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <Button variant='outline' className='cursor-pointer'>
-            View latest prices
-          </Button>
-        </a>
+      <Header title={routeTitle} showBackButton />
+      <div className='flex flex-col gap-10'>
+        <div>
+          <RouteHistoryHeader title='economy' route={route} />
+          <RouteHistorySummary
+            cheapestFare={cheapestEconomyFare}
+            highestFare={highestEconomyFare}
+            averageFare={averageEconomyFare}
+          />
+          <PriceChart fares={economyRouteHistory} />
+        </div>
+        <div>
+          <RouteHistoryHeader title='business' route={route} />
+          <RouteHistorySummary
+            cheapestFare={cheapestBusinessFare}
+            highestFare={highestBusinessFare}
+            averageFare={averageBusinessFare}
+          />
+          <PriceChart fares={businessRouteHistory} />
+        </div>
       </div>
-      <RouteHistorySummary
-        title='Economy'
-        cheapestFare={cheapestEconomyFare}
-        highestFare={highestEconomyFare}
-        averageFare={averageEconomyFare}
-      />
-      <PriceChart fares={economyRouteHistory} />
-      <RouteHistorySummary
-        title='Business'
-        cheapestFare={cheapestBusinessFare}
-        highestFare={highestBusinessFare}
-        averageFare={averageBusinessFare}
-      />
-      <PriceChart fares={businessRouteHistory} />
+    </div>
+  );
+}
+
+function RouteHistoryHeader({
+  title,
+  route,
+}: {
+  title: FareClass;
+  route: Route;
+}) {
+  let link = `https://www.momondo.com/flight-search/${route.fromAirport}-${route.toAirport}/${route.startDate}/${route.endDate}`;
+
+  if (title === 'business') {
+    link += '/business';
+  }
+
+  return (
+    <div className='flex flex-row justify-between items-center mb-4'>
+      <h1 className='text-2xl capitalize text-foreground mb-4'>{title}</h1>
+      <a href={link} target='_blank' rel='noopener noreferrer'>
+        <Button variant='default' className='cursor-pointer'>
+          View latest prices
+        </Button>
+      </a>
     </div>
   );
 }
 
 function RouteHistorySummary({
-  title,
   cheapestFare,
   highestFare,
   averageFare,
 }: {
-  title: string;
   cheapestFare: Fares;
   highestFare: Fares;
   averageFare: number;
 }) {
   return (
     <div>
-      <h2 className='text-xl text-secondary mb-4'>{title}</h2>
       <div className='grid grid-cols-3 gap-4 mb-4'>
         <FarePrice fareType='cheapest' fare={cheapestFare.cheapest} />
         <FarePrice fareType='highest' fare={highestFare.cheapest} />

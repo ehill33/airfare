@@ -158,7 +158,7 @@ function AirportList({
         {airports.map((airport) => (
           <li
             key={airport.id}
-            className='flex items-center gap-2  hover:bg-gray-100 rounded-md'
+            className='flex items-center gap-2 hover:bg-gray-100 rounded-md'
           >
             <Checkbox
               id={airport.id.toString()}

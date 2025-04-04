@@ -43,7 +43,7 @@ function RouteList({ routes, trip }: RouteListProps) {
       </div>
       <ul className='grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]'>
         {sortedRoutes.map((route: Route) => (
-          <li key={route.id} className='bg-gray-700 my-1'>
+          <li key={route.id}>
             <RouteCard fareClass={fareClass} route={route} />
           </li>
         ))}
