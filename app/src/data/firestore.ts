@@ -5,6 +5,7 @@ import {
 } from 'firebase-admin/firestore';
 import { db } from './firebase';
 import { Airport } from '@/lib/airport-util';
+import { DeletedObjectJSON, UserJSON } from '@clerk/nextjs/server';
 export type Trip = {
   id: string;
   name: string;
@@ -38,6 +39,10 @@ export type Fare = {
   price: number;
   duration: number;
 };
+
+export type User = UserJSON & {
+  primary_email_address: string,
+}
 
 export async function getTrips(): Promise<Trip[]> {
   try {
@@ -117,6 +122,37 @@ export async function getRouteHistory(
   } catch (error) {
     console.error(error);
     return [];
+  }
+}
+
+export async function createUser(clerkUser: UserJSON) {
+  const user: User = {
+    primary_email_address: clerkUser.email_addresses[0].email_address,
+    ...clerkUser
+  }
+  try {
+    await db.collection('users').doc(clerkUser.id).set(user);
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export async function updateUser() {
+  // TODO: Handle both updating in app or clerk dashboard?
+}
+
+export async function deleteUser(clerkUser: DeletedObjectJSON) {
+  if (!clerkUser.id) {
+    console.warn('No id found for deleted user:', clerkUser)
+    return
+  }
+
+  console.log(`Deleting user: ${clerkUser.id}`)
+
+  try {
+    await db.collection('users').doc(clerkUser.id).delete();
+  } catch(error) {
+    console.error(error);
   }
 }
 
